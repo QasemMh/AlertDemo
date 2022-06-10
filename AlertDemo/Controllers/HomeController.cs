@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AlertDemo.Controllers
@@ -32,6 +33,7 @@ namespace AlertDemo.Controllers
         public IActionResult Index()
         {
             TempData["welcom"] = "welcom";
+
             return View(employees);
         }
 
@@ -41,6 +43,10 @@ namespace AlertDemo.Controllers
         [HttpPost]
         public IActionResult Delete(int? id)
         {
+            var delay = 3000;
+            Thread.Sleep(delay);
+
+
             if (id == null) return BadRequest();
 
             var employee = employees.FirstOrDefault(x => x.Id == id);
