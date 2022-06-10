@@ -1,0 +1,147 @@
+﻿@model List<Employee>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<hr />
+
+<h4>
+    <button class="my-4 btn btn-primary simple-btn"> Click To Simple Alert </button>
+</h4>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Salary</th>
+                    <th scope="col">Action (using ajax)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.FirstName</td>
+                        <td>@item.LastName</td>
+                        <td>@item.Salary</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm delete-btn" data-employeeid="@item.Id">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+
+
+    @*    https://sweetalert2.github.io/ *@
+    @*sweetalert2*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
+
+
+
+    @* simple js client side*@
+
+    @if (TempData["welcom"] != null)
+    {
+        <script>
+            Swal.fire(
+                'Welcom!!',
+                'You Log in!',
+                'success'
+            )
+        </script>
+    }
+
+
+    @* simple js on click button*@
+    <script>
+        document.querySelector(".simple-btn").addEventListener("click", function() {
+
+            Swal.fire({
+                title: 'Custom width, padding, color, background.',
+                width: 600,
+                padding: '3em',
+                color: '#716add',
+                background: '#fff url(/images/trees.png)',
+                backdrop: `
+                                    rgba(0,0,123,0.4)
+                                    url("/images/nyan-cat.gif")
+                                    left top
+                                    no-repeat
+                                  `
+            });
+
+        });
+    </script>
+
+
+    @* ajax*@
+    <script>
+
+        //get All buttons
+        let btns = document.querySelectorAll(".delete-btn");
+
+        //loop on all buttons
+        btns.forEach(btn => {
+            //add event on click for all buttons
+            btn.addEventListener("click", function() {
+
+                //get employ id from button data
+                let formData = new FormData();
+                formData.append("id", btn.dataset.employeeid + "");
+
+
+
+
+                //call c# method from js (ajax)
+                fetch('Home/Delete', {
+                    method: 'POST',
+                    body: formData
+                }).then(res => {
+                    //if true call alert
+                    if (res.ok) {
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            //if true (200 ok)
+                            if (result.isConfirmed) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                );
+
+                                btn.parentNode.parentNode.style.display = "none";
+                            } else {
+                                //if return (401 Bad Request)
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+
+    </script>
+}
