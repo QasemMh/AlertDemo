@@ -43,9 +43,7 @@ namespace AlertDemo.Controllers
         [HttpPost]
         public IActionResult Delete(int? id)
         {
-            var delay = 3000;
-            Thread.Sleep(delay);
-
+           
 
             if (id == null) return BadRequest();
 
